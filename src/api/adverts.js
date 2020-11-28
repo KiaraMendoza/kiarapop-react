@@ -1,15 +1,26 @@
-import axios from 'axios';
-import { Advert, AdvertsCollection } from '../models/models';
+// import { Advert, AdvertsCollection } from '../models/models';
 import client from './client';
 
 export const getAdverts = () => {
     const url = `/ads`;
-    return client.get(url);
+    return client.get(url)
+    .then(response => {
+        return response.data.result.ads;
+    })
+    .catch(err => {
+        return null;
+    });
 }
 
 export const getAdvertDetail = (advertId) => {
     const url = `/ads/${advertId}`;
-    return client.get(url);
+    return client.get(url)
+    .then(response => {
+        return response.data;
+    })
+    .catch(err => {
+        return null;
+    });
 }
 
 export const deleteAdvert = (advertId) => {

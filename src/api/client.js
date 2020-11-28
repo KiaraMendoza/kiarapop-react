@@ -6,19 +6,25 @@ const client = axios.create({
     baseURL,
 });
 
-const setAuthHeader = (token) => {
+const setAuthorizationHeader = (token) => {
     client.defaults.headers.common['Authorization'] = token;
 }
 
 client.login = (credentials) => {
     return client.post(`/auth`, credentials)
         .then((response) => {
-            setAuthHeader(response.tokenJWT);
-            return response.tokenJWT;
+            setAuthorizationHeader(response.data.tokenJWT);
+            return response.data.tokenJWT;
         })
         .catch((error) => {
             return error;
         })
 }
+
+export const configureClient = token => {
+    if (token) {
+        setAuthorizationHeader(token);
+    }
+};
 
 export default client;

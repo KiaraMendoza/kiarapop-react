@@ -1,1 +1,14 @@
 @import './login';
+@import './oldStyles.scss';
+
+.fullscreen-page {
+    width: 100vw;
+    height: 93vh;
+    h1 {
+        font-size: 50px;
+    }
+    p {
+        font-size: 18px;
+        line-height: 35px;
+    }
+}
