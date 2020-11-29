@@ -36,42 +36,43 @@ const App = () => {
 
     return (
         <div className="app">
-            <nav className="navbar navbar-expand navbar-light bg-light">
-                <Router>
-                    <ul className="nav navbar-nav ml-auto">
-                    {userData &&
-                        <>
-                            <li className="nav-item">
-                                <Link to="/adverts">Adverts</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/adverts/new">Create new Advert</Link>
-                            </li>
-                            <li className="nav-item">
-                                <Link to="/" onClick={handleLogOut}>Log out</Link>
-                            </li>
-                        </>
-                    }
-                    {!userData &&
-                            <li className="nav-item">
-                                <Link to="/login">Log in</Link>
-                            </li>
-                    }
-                    </ul>
-                </Router>
-            </nav>
             <Router>
+                <nav className="navbar navbar-expand navbar-light bg-light">
+                        <ul className="nav navbar-nav ml-auto">
+                            {userData &&
+                                <>
+                                    <li className="nav-item">
+                                        <Link to="/adverts">Adverts</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link to="/adverts/new">Create new Advert</Link>
+                                    </li>
+                                    <li className="nav-item">
+                                        <Link to="/" onClick={handleLogOut}>Log out</Link>
+                                    </li>
+                                </>
+                            }
+                            {!userData &&
+                                <li className="nav-item">
+                                    <Link to="/login">Log in</Link>
+                                </li>
+                            }
+                        </ul>
+                </nav>
                 <Switch>
                     <Route exact path="/login">
                         {!userData ? <AuthContainer setUserData={setUserData} setIsLoading={setIsLoading} /> : <Redirect to="/adverts" />}
                     </Route>
                     <Route exact path="/adverts/new">
+                        
                         {userData ? <AdvertsCreate isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
                     </Route>
                     <Route exact path="/adverts/:id">
+                        
                         {userData ? <AdvertsDetail isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
                     </Route>
                     <Route exact path="/adverts">
+                        
                         {userData ? <AdvertsContainer isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
                     </Route>
                     <Route exact path="/">
@@ -87,7 +88,7 @@ const App = () => {
             </Router>
         </div>
     )
-}
+};
 
 ReactDOM.render(<App />,
     document.getElementById('root')

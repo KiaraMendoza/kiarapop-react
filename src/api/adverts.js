@@ -37,6 +37,12 @@ export const deleteAdvert = (advertId) => {
 }
 
 export const createAdvert = (advertData) => {
+    var formData = new FormData();
+
+    for (var key in advertData) {
+        formData.append(key, advertData[key]);
+    }
+    
     const url = `/ads/`;
-    return client.post(url, advertData);
+    return client.post(url, formData);
 }
