@@ -4,6 +4,8 @@ This is a project made for the KeepCoding's Web Development Bootcamp. I hope you
 
 ## I've made this project on less than a single weekend, so please consider that in mind! >_<
 
+And take in account that I've use 'ads' instead of 'adverts' for the backend. 
+
 ## Install -- First initialize the backend first!
 
 ```sh
