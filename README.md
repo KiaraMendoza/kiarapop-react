@@ -1,70 +1,155 @@
-# Getting Started with Create React App
+<h1 align="center">Welcome to Kiarapop 👋</h1>
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a project made for the KeepCoding's Web Development Bootcamp. I hope you like it and send feedback to improve!
 
-## Available Scripts
+## Install -- First initialize the backend first!
 
-In the project directory, you can run:
+```sh
+npm install
+```
 
-### `npm start`
+## Configure environment variables
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Copy .env.example to .env and review the settings to adjust them to yours.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+```sh
+cp .env.example .env
+```
 
-### `npm test`
+## Usage
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```sh
+npm start
+```
 
-### `npm run build`
+## Development start
+-- Not available yet
+```sh
+npm run dev
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## API Methods (Initialize the backend server first)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+GET /apiv2/ads
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```json
+[
+  {
+    "_id": "5f54ff0359704a3fd0186857",
+    "name": "Samsung Galaxy S9",
+    "price": 360,
+    "sale": true,
+    "tags": ["mobile","recent"]
+  },
+  {
+    "_id": "5f54ff0359704a3fd0186858",
+    "name": "Xiaomi Redmi Note 8",
+    "price": 190,
+    "sale": true,
+    "tags": ["mobile","recent"]
+  }
+]
+```
 
-### `npm run eject`
+Example filters:
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+* http://localhost:3000/apiv2/ads?name=adName
+* http://localhost:3000/apiv2/ads?price=360
+* http://localhost:3000/apiv2/ads?sale=true
+* http://localhost:3000/apiv2/ads?skip=20&limit=10
+* http://localhost:3000/apiv2/ads?sort=name
+* http://localhost:3000/apiv2/ads?fields=name%20-_id (get only names, discarting the id field)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### To get only one ad by id
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+GET /apiv2/ads/_id
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```json
+{
+  "result": {
+    "_id": "5f54ff0359704a3fd0186857",
+    "name": "Samsung Galaxy S9",
+    "price": 360,
+    "sale": true,
+    "tags": ["mobile","recent"]
+  },
+}
+```
 
-## Learn More
+### To create one ad
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+POST /apiv2/ads body: { name: 'Ad name', price: 999, sale: true, tags: ["example"] },
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```json
+{
+  "result":  { 
+    "name": "Ad name",
+    "price": 999, 
+    "sale": true, 
+    "tags": ["example"],
+    "image": "10101010010_imageName.jpg"
+  },
+}
 
-### Code Splitting
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+The thumbnail will automatically be generating right after you post the new ad, it will just take some little time to appear on the ads' page.
 
-### Analyzing the Bundle Size
+### Update one ad by id
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+PUT /apiv2/agentes/<_id> body: { name: 'Ad new name', price: 444 }
 
-### Making a Progressive Web App
+```json
+{
+  "result": { 
+    "name": "Ad new name",
+    "price": 444, 
+    "sale": true, 
+    "tags": ["example"] 
+  },
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Delete one ad by id
 
-### Advanced Configuration
+DELETE /apiv2/agentes/<_id>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+Returns: HTTPCode 200 its to say, a successfully response from the server. And the deleted Ad.
 
-### Deployment
+```json
+{
+  "result": { 
+    "name": "Ad new name",
+    "price": 444, 
+    "sale": true, 
+    "tags": ["example"] 
+  },
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Get all images
+Needed for updating ads and add them it's images.
 
-### `npm run build` fails to minify
+GET /apiv2/images
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```json
+[
+    "1599842148234_checo.jpg",
+    "1600011872410_macbookpro.jpg",
+    "1600011932250_xiaomi.jpg"
+]
+```
+
+## Author
+
+👤 **Kiara Mendoza**
+
+* Website: https://kiara-portfolio.netlify.app/
+* Github: [@KiaraMendoza](https://github.com/KiaraMendoza)
+
+## Show your support
+
+Give a ⭐️ if this project helped you!
+
+***
+_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_

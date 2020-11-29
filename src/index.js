@@ -11,6 +11,8 @@ import AdvertsContainer from './components/adverts/AdvertsContainer';
 import NotFoundPage from './components/globals/NotFoundPage';
 
 import './scss/styles.scss';
+import AdvertsCreate from './components/adverts/AdvertsCreate';
+import AdvertsDetail from './components/adverts/AdvertsDetail';
 
 const loggedUser = storage.get('loggedUser') || { email: null, token: null };
 configureClient(loggedUser.token);
@@ -34,13 +36,16 @@ const App = () => {
 
     return (
         <div className="app">
-            <nav className="navbar navbar-expand-xl navbar-light bg-light">
+            <nav className="navbar navbar-expand navbar-light bg-light">
                 <Router>
                     <ul className="nav navbar-nav ml-auto">
                     {userData &&
                         <>
                             <li className="nav-item">
                                 <Link to="/adverts">Adverts</Link>
+                            </li>
+                            <li className="nav-item">
+                                <Link to="/adverts/new">Create new Advert</Link>
                             </li>
                             <li className="nav-item">
                                 <Link to="/" onClick={handleLogOut}>Log out</Link>
@@ -60,14 +65,23 @@ const App = () => {
                     <Route exact path="/login">
                         {!userData ? <AuthContainer setUserData={setUserData} setIsLoading={setIsLoading} /> : <Redirect to="/adverts" />}
                     </Route>
+                    <Route exact path="/adverts/new">
+                        {userData ? <AdvertsCreate isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
+                    </Route>
+                    <Route exact path="/adverts/:id">
+                        {userData ? <AdvertsDetail isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
+                    </Route>
                     <Route exact path="/adverts">
                         {userData ? <AdvertsContainer isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
                     </Route>
                     <Route exact path="/">
                         {userData ? <Redirect to="/adverts" /> : <Redirect to="/login" />}
                     </Route>
-                    <Route path="/">
+                    <Route path="/404" exact>
                         <NotFoundPage />
+                    </Route>
+                    <Route>
+                        <Redirect to="/404" />
                     </Route>
                 </Switch>
             </Router>
