@@ -2,6 +2,8 @@
 
 This is a project made for the KeepCoding's Web Development Bootcamp. I hope you like it and send feedback to improve!
 
+## I've made this project on less than a single weekend, so please consider that in mind! >_<
+
 ## Install -- First initialize the backend first!
 
 ```sh

@@ -86,6 +86,11 @@ const App = () => {
                     </Route>
                 </Switch>
             </Router>
+            <div className="footer">
+                <p>
+                    Sadly, I've made this project on less than a single weekend, so please consider that in mind! {`>_<`}
+                </p>
+            </div>
         </div>
     )
 };
