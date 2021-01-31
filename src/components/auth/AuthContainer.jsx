@@ -1,11 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import LoginForm from './LoginForm';
-import RememberForm from './RememberForm';
-import SignUpForm from './SignUpForm';
 
-const AuthContainer = ({ setUserData, setIsLoading }) => {
+const AuthContainer = (props) => {
     const [hasError, setHasError] = useState(false);
     const [formSelected, setFormSelected] = useState('login');
+
 
     const handleFormChange = (e, newForm) => {
         setFormSelected(newForm);
@@ -15,9 +14,9 @@ const AuthContainer = ({ setUserData, setIsLoading }) => {
     return (
         <div className="login__container">
             {formSelected === 'login' &&
-                <LoginForm setIsLoading={setIsLoading} setHasError={setHasError} setUserData={setUserData} />}
-            {/* {formSelected === 'remember' && <RememberForm setIsLoading={setIsLoading} />} */}
-            {/* {formSelected === 'signUp' && <SignUpForm setIsLoading={setIsLoading} />} */}
+                <LoginForm setHasError={setHasError} {...props} />}
+            {/* {formSelected === 'remember' && <RememberForm />} */}
+            {/* {formSelected === 'signUp' && <SignUpForm />} */}
             {hasError && <p>{hasError}</p>}
             <div className="d-flex justify-content-center align-items-center">
                 <button className="btn btn-secondary" type="button" disabled onClick={(e) => handleFormChange(e, 'remember')}>

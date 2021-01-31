@@ -8,7 +8,7 @@ export default class Advert {
     }
 }
 
-export default class AdvertsCollection {
+export class AdvertsCollection {
     constructor() {
         this.collection = [];
     }

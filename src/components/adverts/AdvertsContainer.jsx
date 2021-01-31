@@ -7,7 +7,8 @@ import storage from '../../utils/storage';
 
 const lastUsedFilters = storage.get('lastUsedFilters');
 
-const AdvertsContainer = ({ isLoading, setIsLoading }) => {
+const AdvertsContainer = () => {
+    const [isLoading, setIsLoading] = useState(false);
     const [hasError, setHasError] = useState(false);
     const [isAdvancedFilters, setIsAdvancedFilters] = useState(false);
     const [advertsData, setAdvertsData] = useState(null);
@@ -21,7 +22,7 @@ const AdvertsContainer = ({ isLoading, setIsLoading }) => {
             } else {
                 fetchedAdverts = await getAdverts();
             }
-            setAdvertsData(fetchedAdverts);
+            setAdvertsData(fetchedAdverts.result.rows);
             setIsLoading(false);
         } catch (err) {
             setIsLoading(false);
@@ -37,15 +38,15 @@ const AdvertsContainer = ({ isLoading, setIsLoading }) => {
         <div className="adverts__container">
             <h2 className="adverts__title text-center my-4">Adverts page</h2>
             {hasError && <p className="general-error-text">{hasError}</p>}
-            {!hasError && 
-            <>
-                {!isAdvancedFilters && <BasicFilters setIsLoading={setIsLoading} setHasError={setHasError} setAdvertsData={setAdvertsData} />}
-                {isAdvancedFilters && <AdvertsFilters setIsLoading={setIsLoading} setHasError={setHasError} setAdvertsData={setAdvertsData} />}
-                <button type="button" onClick={() => setIsAdvancedFilters(!isAdvancedFilters)} className="mx-auto d-block btn btn-primary py-2 px-5">
-                    {isAdvancedFilters ? "Open" : "Close"} advanced search
+            {!hasError &&
+                <>
+                    {!isAdvancedFilters && <BasicFilters setIsLoading={setIsLoading} setHasError={setHasError} setAdvertsData={setAdvertsData} />}
+                    {isAdvancedFilters && <AdvertsFilters setIsLoading={setIsLoading} setHasError={setHasError} setAdvertsData={setAdvertsData} />}
+                    <button type="button" onClick={() => setIsAdvancedFilters(!isAdvancedFilters)} className="mx-auto d-block btn btn-primary py-2 px-5">
+                        {isAdvancedFilters ? "Close" : "Open"} advanced search
                 </button>
-                {!isLoading && <AdvertsList advertsData={advertsData} />}
-            </>}
+                    {!isLoading && <AdvertsList advertsData={advertsData} />}
+                </>}
         </div>
     )
 }

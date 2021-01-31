@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Switch, Route, Redirect, NavLink, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect, Link } from "react-router-dom";
 
 // import store from './store';
 // import { Provider } from 'react-redux';
 import storage from './utils/storage';
 import { configureClient } from './api/client';
+import { AuthContextProvider } from './contexts/auth';
 import AuthContainer from './components/auth/AuthContainer';
 import AdvertsContainer from './components/adverts/AdvertsContainer';
 import NotFoundPage from './components/globals/NotFoundPage';
@@ -13,87 +14,87 @@ import NotFoundPage from './components/globals/NotFoundPage';
 import './scss/styles.scss';
 import AdvertsCreate from './components/adverts/AdvertsCreate';
 import AdvertsDetail from './components/adverts/AdvertsDetail';
+import PrivateRoute from './components/auth/PrivateRoute';
 
-const loggedUser = storage.get('loggedUser') || { email: null, token: null };
-configureClient(loggedUser.token);
+const { token } = storage.get('auth') || { token: null };
+configureClient(token);
+class App extends React.Component {
+    state = {
+        isLogged: !!token,
+    };
 
-const App = () => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [userData, setUserData] = useState(null);
+    handleLogin = cb => {
+        this.setState({ isLogged: true }, cb);
+    };
 
-    const handleAuthUser = () => {
-        if (loggedUser && loggedUser.email) setUserData(loggedUser);
-    }
-
-    const handleLogOut = () => {
-        if (loggedUser) storage.remove('loggedUser');
-        setUserData(null);
-    }
+    handleLogout = () => {
+        this.setState({ isLogged: false });
+    };
     
-    useEffect(() => {
-        handleAuthUser();
-    }, []);
 
-    return (
-        <div className="app">
-            <Router>
-                <nav className="navbar navbar-expand navbar-light bg-light">
-                        <ul className="nav navbar-nav ml-auto">
-                            {userData &&
-                                <>
-                                    <li className="nav-item">
-                                        <Link to="/adverts">Adverts</Link>
-                                    </li>
-                                    <li className="nav-item">
-                                        <Link to="/adverts/new">Create new Advert</Link>
-                                    </li>
-                                    <li className="nav-item">
-                                        <Link to="/" onClick={handleLogOut}>Log out</Link>
-                                    </li>
-                                </>
-                            }
-                            {!userData &&
-                                <li className="nav-item">
-                                    <Link to="/login">Log in</Link>
-                                </li>
-                            }
-                        </ul>
-                </nav>
-                <Switch>
-                    <Route exact path="/login">
-                        {!userData ? <AuthContainer setUserData={setUserData} setIsLoading={setIsLoading} /> : <Redirect to="/adverts" />}
-                    </Route>
-                    <Route exact path="/adverts/new">
-                        
-                        {userData ? <AdvertsCreate isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
-                    </Route>
-                    <Route exact path="/adverts/:id">
-                        
-                        {userData ? <AdvertsDetail isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
-                    </Route>
-                    <Route exact path="/adverts">
-                        
-                        {userData ? <AdvertsContainer isLoading={isLoading} setIsLoading={setIsLoading} /> : <Redirect to="/login" />}
-                    </Route>
-                    <Route exact path="/">
-                        {userData ? <Redirect to="/adverts" /> : <Redirect to="/login" />}
-                    </Route>
-                    <Route path="/404" exact>
-                        <NotFoundPage />
-                    </Route>
-                    <Route>
-                        <Redirect to="/404" />
-                    </Route>
-                </Switch>
-            </Router>
-            <div className="footer">
-                <p>
-                    Sadly, I've made this project on less than a single weekend, so please consider that in mind! {`>_<`}
-                </p>
+    render() {
+        const { isLogged } = this.state;
+        console.log(isLogged)
+        return (
+            <div className="app">
+                <AuthContextProvider
+                    value={{
+                        isLogged,
+                        onLogin: this.handleLogin,
+                        onLogout: this.handleLogout,
+                    }}
+                >
+                    <Router>
+                        <nav className="navbar navbar-expand navbar-light bg-light">
+                                <ul className="nav navbar-nav ml-auto">
+                                    {isLogged &&
+                                        <>
+                                            <li className="nav-item">
+                                                <Link to="/adverts">Adverts</Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/adverts/new">Create new Advert</Link>
+                                            </li>
+                                            <li className="nav-item">
+                                                <Link to="/" onClick={this.handleLogOut}>Log out</Link>
+                                            </li>
+                                        </>
+                                    }
+                                    {!isLogged &&
+                                        <li className="nav-item">
+                                            <Link to="/login">Log in</Link>
+                                        </li>
+                                    }
+                                </ul>
+                        </nav>
+                        <Switch>
+                            <Route path="/" exact>
+                                <Redirect to="/adverts" />
+                            </Route>
+                            <Route exact path="/login">
+                                {routerProps => (
+                                    <AuthContainer onLogin={this.handleLogin} isLogged={isLogged} {...routerProps} />
+                                )}
+                            </Route>
+                            <PrivateRoute path="/adverts/new" exact component={AdvertsCreate} />
+                            <PrivateRoute path="/adverts/:id" exact component={AdvertsDetail} />
+                            <PrivateRoute path="/adverts" exact component={AdvertsContainer} />
+                            <Route path="/404" exact>
+                                <NotFoundPage />
+                            </Route>
+                            <Route>
+                                <Redirect to="/404" />
+                            </Route>
+                        </Switch>
+                    </Router>
+                </AuthContextProvider>
+                <div className="footer">
+                    <p>Made with Love by Kiara Mendoza García</p>
+                </div>
             </div>
-        </div>
-    )
-};
+        );
+    }
+}
 
 ReactDOM.render(<App />,
     document.getElementById('root')

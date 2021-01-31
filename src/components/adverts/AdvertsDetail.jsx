@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect, useParams } from 'react-router-dom';
-import { deleteAdvert, getAdvertDetail } from '../../api/adverts';
+import { deleteAdvert, getAdvert } from '../../api/adverts';
 import Advert from './Advert';
 
-const AdvertsDetail = ({ isLoading, setIsLoading }) => {
+const AdvertsDetail = ({ history }) => {
+    const [isLoading, setIsLoading] = useState(false);
     const [advertIsLoading, setAdvertIsLoading] = useState(true);
     const [advertData, setAdvertData] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -13,8 +14,8 @@ const AdvertsDetail = ({ isLoading, setIsLoading }) => {
         setAdvertIsLoading(true);
         setIsLoading(true);
         try {
-            const fetchedAdvert = await getAdvertDetail(advertId);
-            setAdvertData([fetchedAdvert]);
+            const fetchedAdvert = await getAdvert(advertId);
+            setAdvertData([fetchedAdvert.result]);
             setAdvertIsLoading(false);
             setIsLoading(false);
         } catch (err) {
@@ -25,13 +26,7 @@ const AdvertsDetail = ({ isLoading, setIsLoading }) => {
     }
 
     const sendDelete = async () => {
-        try {
-            const deletedAdvert = await deleteAdvert(advertId);
-            // if (deletedAdvert) return <Redirect to="/adverts" />; 
-            if (deletedAdvert) return window.location('/adverts');
-        } catch (err) {
-            return null;
-        }
+        await deleteAdvert(advertId).then(() => history.push('/'));
     }
 
     useEffect(() => {

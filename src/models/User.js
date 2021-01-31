@@ -7,7 +7,7 @@ export default class User {
     }
 }
 
-export default class UsersCollection {
+export class UsersCollection {
     constructor() {
         this.collection = [];
     }

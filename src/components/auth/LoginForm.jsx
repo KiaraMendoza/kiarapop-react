@@ -1,24 +1,21 @@
 import React, { useState } from 'react'; 
 import { useForm } from "react-hook-form";
 import { login } from '../../api/auth';
-import storage from '../../utils/storage';
 
-const LoginForm = ({ setIsLoading, setHasError, setUserData }) => {
-    const { register, handleSubmit, watch, errors } = useForm();
+const LoginForm = ({ setHasError, location, history, onLogin }) => {
+    const { register, handleSubmit, errors } = useForm();
 
-    const onSubmit = async (data) => {
-        setIsLoading(true);
-        try {
-            const userToken = await login({ email: data.email, password: data.password });
-            const loggedUser = { email: data.email, token: userToken };
-            console.log(loggedUser)
-            if (data.rememberMe) storage.set('loggedUser', loggedUser);
-            setUserData(loggedUser);
-            setIsLoading(false);
-        } catch {
-            setIsLoading(false);
-            setHasError('An error ocurred, please contact us for more information. Sorry for the inconvenience.');
-        }
+    const onSubmit = (data) => {
+        login(data)
+            .then(() => {
+                onLogin(() => {
+                    const { from } = location.state || { from: { pathname: '/' } };
+                    history.replace(from);
+                })
+            })
+            .catch(error => {
+                setHasError('An error ocurred, please contact us for more information. Sorry for the inconvenience.');
+            });
     };
 
     return (

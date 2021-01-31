@@ -1,19 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { createAdvert } from '../../api/adverts';
+import { createAdvert, getTags } from '../../api/adverts';
 
-const AdvertsCreate = () => {
+const AdvertsCreate = ({ history }) => {
     // const [advertData, setAdvertData] = useState(null);
-    const { register, handleSubmit, watch, errors } = useForm();
+    const { register, handleSubmit, errors } = useForm();
+    const [tags, setTags] = useState([]);
 
     const onSubmit = async (data) => {
-        try {
-            const createdAdvert = await createAdvert(data);
-            console.log(createdAdvert);
-            if (createdAdvert) return window.location.assign('/adverts'+createdAdvert._id);
-        } catch {
-            return null;
-        }
+        await createAdvert(data)
+            .then(({ result: createdAdvert }) => history.push(`/adverts/${createdAdvert._id}`))
+            .catch(error => this.setState({ error }));
     };
 
     const maxLengthCheck = (object) => {
@@ -21,6 +18,15 @@ const AdvertsCreate = () => {
             object.target.value = object.target.value.slice(0, object.target.maxLength)
         }
     }
+
+    const handleGetTags = async () => {
+        const fetchedTags = await getTags();
+        setTags(fetchedTags.result);
+    }
+
+    useEffect(() => {
+        handleGetTags()
+    }, [])
 
     return (
         <div className="advert__create">
@@ -44,27 +50,17 @@ const AdvertsCreate = () => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="price">Price</label>
-                    <input type="number" onInput={maxLengthCheck} maxLength="6" name="price" ref={register({ required: true })} />
+                    <input type="number" onInput={maxLengthCheck} maxLength="5" name="price" ref={register({ required: true })} />
                     {errors.price && <span className="error-message">This field is required</span>}
                 </div>
                 <div className="form-group d-flex align-items-center justify-content-center">
                     <p className="mb-0">Tags</p>
-                    <div className="d-flex align-items-center mx-2">
-                        <label className="mb-0 mr-2" htmlFor="tags">Work</label>
-                        <input type="checkbox" name="tags" value="work" ref={register} />
-                    </div>
-                    <div className="d-flex align-items-center mx-2">
-                        <label className="mb-0 mr-2" htmlFor="tags">Lifestyle</label>
-                        <input type="checkbox" name="tags" value="lifestyle" ref={register} />
-                    </div>
-                    <div className="d-flex align-items-center mx-2">
-                        <label className="mb-0 mr-2" htmlFor="tags">Mobile</label>
-                        <input type="checkbox" name="tags" value="mobile" ref={register} />
-                    </div>
-                    <div className="d-flex align-items-center mx-2">
-                        <label className="mb-0 mr-2" htmlFor="tags">Motor</label>
-                        <input type="checkbox" name="tags" value="motor" ref={register} />
-                    </div>
+                    {tags.map(tag => (
+                        <div className="d-flex align-items-center mx-2">
+                            <label className="mb-0 mr-2" htmlFor={tag}>{tag}</label>
+                            <input type="checkbox" name="tags" value={tag} ref={register} />
+                        </div>
+                    ))}
                     {errors.tags && <span className="error-message">This field is required</span>}
                 </div>
                 <div className="form-group">

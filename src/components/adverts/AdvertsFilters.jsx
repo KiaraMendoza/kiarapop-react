@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { getAdverts } from '../../api/adverts';
 import storage from '../../utils/storage';
 import removeEmptyFields from '../../utils/removeEmptyFields'; 
 import RangeSlider from '../globals/RangeSlider';
+import { getTags } from '../../api/adverts';
 
 const AdvertsFilters = ({ setIsLoading, setAdvertsData, setHasError }) => {
-    const { register, handleSubmit, watch, errors } = useForm();
+    const { register, handleSubmit } = useForm();
     const [priceValue, setPriceValue] = useState([0, 100000]);
+    const [tags, setTags] = useState([]);
 
     const onSubmit = async (data) => {
         setIsLoading(true);
@@ -19,9 +21,8 @@ const AdvertsFilters = ({ setIsLoading, setAdvertsData, setHasError }) => {
             dataWithoutEmptyFields = { ...dataWithoutEmptyFields, price: adaptedPriceRange };
             console.log("dataWithoutEmptyFields", dataWithoutEmptyFields)
             const fetchedAdverts = await getAdverts(dataWithoutEmptyFields);
-            console.log(lastUsedFilters)
             storage.set('lastUsedFilters', lastUsedFilters);
-            setAdvertsData(fetchedAdverts);
+            setAdvertsData(fetchedAdverts.result.rows);
             setIsLoading(false);
         } catch {
             setIsLoading(false);
@@ -32,6 +33,16 @@ const AdvertsFilters = ({ setIsLoading, setAdvertsData, setHasError }) => {
     const handlePriceRange = (event, newValue) => {
         setPriceValue(newValue);
     };
+
+    const handleGetTags = async () => {
+        const fetchedTags = await getTags();
+        console.log(fetchedTags)
+        setTags(fetchedTags.result);
+    }
+
+    useEffect(() => {
+        handleGetTags()
+    }, [])
 
     return (
         <div className="adverts__filters">
@@ -59,27 +70,17 @@ const AdvertsFilters = ({ setIsLoading, setAdvertsData, setHasError }) => {
                 <div className="form-group">
                     <label htmlFor="price">Price range</label>
                     {/* <Range min={0} max={10000000} onChange={handlePriceRange} /> */}
-                    <RangeSlider className="price-range" min={0} max={100000} value={priceValue} valueLabelDisplay="auto" 
+                    <RangeSlider className="price-range" min={0} max={10000} value={priceValue} valueLabelDisplay="auto" 
                         aria-labelledby="range-slider" onChange={handlePriceRange} marks={[{ value: 0, label: '0€' },{ value: 100000, label: '100.000€'}]} />
                 </div>
                 <div className="form-group d-flex align-items-center justify-content-center">
                     <p className="mb-0">Tags</p>
-                    <div className="d-flex align-items-center mx-2">
-                        <label className="mb-0 mr-2" htmlFor="work">Work</label>
-                        <input type="checkbox" name="tags" value="work" ref={register} />
-                    </div>
-                    <div className="d-flex align-items-center mx-2">
-                        <label className="mb-0 mr-2" htmlFor="lifestyle">Lifestyle</label>
-                        <input type="checkbox" name="tags" value="lifestyle" ref={register} />
-                    </div>
-                    <div className="d-flex align-items-center mx-2">
-                        <label className="mb-0 mr-2" htmlFor="mobile">Mobile</label>
-                        <input type="checkbox" name="tags" value="mobile" ref={register} />
-                    </div>
-                    <div className="d-flex align-items-center mx-2">
-                        <label className="mb-0 mr-2" htmlFor="motor">Motor</label>
-                        <input type="checkbox" name="tags" value="motor" ref={register} />
-                    </div>
+                    {tags.map(tag => (
+                        <div className="d-flex align-items-center mx-2">
+                            <label className="mb-0 mr-2" htmlFor={tag}>{tag}</label>
+                            <input type="checkbox" name="tags" value="work" ref={register} />
+                        </div>
+                    ))}
                 </div>
                 <button type="submit" className="btn btn-primary btn-filters py-2 px-5">Apply filters</button>
             </form>
