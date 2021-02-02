@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAdverts } from '../../api/adverts';
 import storage from '../../utils/storage';
 
-const BasicFilters = ({ setIsLoading, setAdvertsData, setHasError }) => {
+const BasicFilters = ({ tags, setIsLoading, setAdvertsData, setHasError }) => {
     const [selectedTag, setSelectedTag] = useState(null);
 
     const handleBasicTagSelect = async () => {
@@ -33,10 +33,11 @@ const BasicFilters = ({ setIsLoading, setAdvertsData, setHasError }) => {
             <div className="text-center mb-4">
                 <ul className="list-group flex-row justify-content-center pb-2">
                     <li onClick={() => setSelectedTag("all")} className="list-group-item">All</li>
-                    <li onClick={() => setSelectedTag("work")} className="list-group-item">Work</li>
-                    <li onClick={() => setSelectedTag("lifestyle")} className="list-group-item">Lifestyle</li>
-                    <li onClick={() => setSelectedTag("mobile")} className="list-group-item">Mobile</li>
-                    <li onClick={() => setSelectedTag("motor")} className="list-group-item">Motor</li>
+                    {tags.map(tag => {
+                        return (
+                            <li key={tag} onClick={() => setSelectedTag(tag)} className="list-group-item">{tag}</li>
+                        )
+                    })}
                 </ul>
             </div>
         </div>
