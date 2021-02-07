@@ -3,7 +3,7 @@ import storage from '../utils/storage';
 
 export const login = (credentials) =>
   client.login(credentials).then(auth => {
-    if (credentials.remember) {
+    if (credentials.rememberMe) {
       storage.set('auth', auth);
     }
     return auth.token;
