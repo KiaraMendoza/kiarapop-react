@@ -10,7 +10,7 @@ const Advert = ({ ad, hasImage, checkDetail, hasDelete, handleDelete }) => {
     return (
         <div className="col-6 mx-auto">
             <div className="card mb-3">
-                {hasImage && <img src={ad.image || ad.photo ? `${IMAGE_BASE_URL}/images/${ad.image}` : "https://placedog.net/800"} className="card-img-top" alt={ad.name} />}
+                {hasImage && <img src={ad.image || ad.photo ? `${IMAGE_BASE_URL}${ad.image || ad.photo}` : "https://placedog.net/800"} className="card-img-top" alt={ad.name} />}
                 <div className="card-body">
                     <p className="card-text text-center card-title">{ad.name}.</p>
                     <p className="card-text d-flex justify-content-between card-price font-weight-bold">{ad.price} €.

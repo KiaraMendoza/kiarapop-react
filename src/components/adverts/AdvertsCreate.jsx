@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { createAdvert, getTags } from '../../api/adverts';
+import InputImage from '../globals/InputImage/InputImage';
 
 const AdvertsCreate = ({ history }) => {
     // const [advertData, setAdvertData] = useState(null);
     const { register, handleSubmit, errors } = useForm();
+    const [hasError, setHasError] = useState(false);
     const [tags, setTags] = useState([]);
     const [photo, setPhoto] = useState(null)
 
     const onSubmit = async (data) => {
-        console.log(data)
-        await createAdvert(data)
+        console.log({ ...data, photo })
+        const formData = new FormData();
+        formData.append('name', data.name);
+        formData.append('sale', data.sale);
+        formData.append('price', data.price);
+        data.tags.forEach((tag, index) => formData.append(`tags[${index}]`, tag));
+        if (photo) formData.append('photo', photo);
+        await createAdvert(formData)
             .then(({ result: createdAdvert }) => history.push(`/adverts/${createdAdvert._id}`))
-            .catch(error => this.setState({ error }));
+            .catch(error => setHasError('An error ocurred, please contact us for more information. Sorry for the inconvenience.', error))
     };
 
     const maxLengthCheck = (object) => {
@@ -30,10 +38,9 @@ const AdvertsCreate = ({ history }) => {
         handleGetTags()
     }, [])
 
-    const handlePhotoChange = (e) => {
-        const [file] = e.target.files;
-        console.log(e.target.files)
-        setPhoto(file)
+    const handlePhotoChange = (photo) => {
+        console.log(photo)
+        setPhoto(photo)
     }
 
     return (
@@ -73,10 +80,11 @@ const AdvertsCreate = ({ history }) => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="photo">Image</label>
-                    <input type="file" name="photo" ref={register} />
+                    <InputImage type="file" onChange={handlePhotoChange} />
                 </div>
                 <button type="submit" className="btn btn-primary py-2 px-5">Send</button>
             </form>
+            {hasError && <p className="general-error-text">{hasError}</p>}
         </div>
     )
 }
