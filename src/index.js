@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Switch, Route, Redirect, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 
 // import store from './store';
 // import { Provider } from 'react-redux';
@@ -10,6 +10,8 @@ import { AuthContextProvider } from './contexts/auth';
 import AuthContainer from './components/auth/AuthContainer';
 import AdvertsContainer from './components/adverts/AdvertsContainer';
 import NotFoundPage from './components/globals/NotFoundPage';
+import Header from './components/globals/Header';
+import Footer from './components/globals/Footer';
 
 import './scss/styles.scss';
 import AdvertsCreate from './components/adverts/AdvertsCreate';
@@ -45,28 +47,7 @@ class App extends React.Component {
                     }}
                 >
                     <Router>
-                        <nav className="navbar navbar-expand navbar-light bg-light">
-                                <ul className="nav navbar-nav ml-auto">
-                                    {isLogged &&
-                                        <>
-                                            <li className="nav-item">
-                                                <Link to="/adverts">Adverts</Link>
-                                            </li>
-                                            <li className="nav-item">
-                                                <Link to="/adverts/new">Create new Advert</Link>
-                                            </li>
-                                            <li className="nav-item">
-                                                <Link to="/" onClick={this.handleLogOut}>Log out</Link>
-                                            </li>
-                                        </>
-                                    }
-                                    {!isLogged &&
-                                        <li className="nav-item">
-                                            <Link to="/login">Log in</Link>
-                                        </li>
-                                    }
-                                </ul>
-                        </nav>
+                        <Header />
                         <Switch>
                             <Route path="/" exact>
                                 <Redirect to="/adverts" />
@@ -87,10 +68,8 @@ class App extends React.Component {
                             </Route>
                         </Switch>
                     </Router>
+                    <Footer/>
                 </AuthContextProvider>
-                <div className="footer">
-                    <p>Made with Love by Kiara Mendoza García</p>
-                </div>
             </div>
         );
     }
